@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+pakage goproto.protoc.proto3;
+
+option go_pakage = "./pb";
+
+enum Msg {
+    UNKNOWN = 0;
+    LOGIN_REQ = 2001;
+    LOGIN_RES = 2002;
+}
+
+message LoginReq {
+    uint32 user_id = 1;
+}
+
+message LoginRes {
+    uint32 user_id = 1;
+    bool result = 2;
+}
