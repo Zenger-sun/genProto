@@ -1,13 +1,13 @@
 syntax = "proto3";
 
-pakage goproto.protoc.proto3;
+package goproto.protoc.proto3;
 
-option go_pakage = "./pb";
+option go_package = "./pb";
 
 enum Msg {
     UNKNOWN = 0;
-    LOGIN_REQ = 2001;
-    LOGIN_RES = 2002;
+    LOGIN_REQ = 1001;
+    LOGIN_RES = 1002;
 }
 
 message LoginReq {
