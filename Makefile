@@ -1,5 +1,5 @@
 protoc: 
-	protoc --go_out=. proto/*.proto;
+	protoc --go_out=. proto/*.proto
 
 msg:
-  go run main.go
+	go run main.go
