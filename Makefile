@@ -2,4 +2,4 @@ protoc:
 	protoc --go_out=. proto/*.proto
 
 msg:
-	go run main.go
+	go run genMsg.go
