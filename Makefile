@@ -1,2 +1,2 @@
 proto:
-    protoc --go_out=. proto/*.proto
+  protoc --go_out=. proto/*.proto
