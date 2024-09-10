@@ -1,5 +1,5 @@
 protoc: 
 	protoc --go_out=. proto/*.proto
 
-msg:
+msg: protoc
 	go run genMsg.go
