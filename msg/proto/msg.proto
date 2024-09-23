@@ -4,10 +4,10 @@ package goproto.protoc.proto3;
 
 option go_package = "./pb";
 
-enum Msg {
-    UNKNOWN = 0;
-    LOGIN_REQ = 1001;
-    LOGIN_RES = 1002;
+enum MsgType {
+    MSG_UNKNOWN = 0;
+    MSG_LOGIN_REQ = 2001;
+    MSG_LOGIN_RES = 2002;
 }
 
 message LoginReq {
