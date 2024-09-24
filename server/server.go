@@ -71,6 +71,11 @@ func readTCP(conn net.Conn, router *Router) {
 	}
 }
 
-func Response(conn net.Conn, msg []byte) {
-	conn.Write(msg)
+func Response(conn net.Conn, res pb.MsgType, msg proto.Message) {
+	h := &Head{
+		Len:     0,
+		MsgType: uint16(res),
+	}
+
+	conn.Write(PackMsg(h, msg))
 }

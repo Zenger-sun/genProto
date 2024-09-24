@@ -24,11 +24,6 @@ func Login(msg proto.Message, conn net.Conn) error {
 		Result: true,
 	}
 
-	h := &server.Head{
-		Len:     0,
-		MsgType: uint16(pb.MsgType_MSG_LOGIN_RES),
-	}
-
-	server.Response(conn, server.PackMsg(h, res))
+	server.Response(conn, pb.MsgType_MSG_LOGIN_RES, res)
 	return nil
 }
