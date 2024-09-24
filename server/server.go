@@ -3,6 +3,7 @@ package server
 import (
 	"log/slog"
 	"net"
+	"sync"
 
 	"genProto/msg/pb"
 
@@ -11,7 +12,12 @@ import (
 
 type Handler func(msg proto.Message, conn net.Conn) error
 
-func Server(addr string, router map[pb.MsgType]Handler) error {
+type Router struct {
+	mu      sync.RWMutex
+	Handler map[pb.MsgType]Handler
+}
+
+func Server(addr string, router *Router) error {
 	laddr, err := net.ResolveTCPAddr("tcp", addr)
 	if err != nil {
 		return err
@@ -32,7 +38,7 @@ func Server(addr string, router map[pb.MsgType]Handler) error {
 	}
 }
 
-func readTCP(conn net.Conn, router map[pb.MsgType]Handler) {
+func readTCP(conn net.Conn, router *Router) {
 	buff := make([]byte, PACK_MAX_LEN)
 
 	for {
@@ -50,7 +56,9 @@ func readTCP(conn net.Conn, router map[pb.MsgType]Handler) {
 			continue
 		}
 
-		handler, ok := router[pb.MsgType(head.MsgType)]
+		router.mu.RLock()
+		handler, ok := router.Handler[pb.MsgType(head.MsgType)]
+		router.mu.RUnlock()
 		if !ok {
 			continue
 		}

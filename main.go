@@ -28,8 +28,8 @@ func main() {
 		msg.GenMsg(PROTO_PATH)
 
 	case "server":
-		router := make(map[pb.MsgType]server.Handler)
-		router[pb.MsgType_MSG_LOGIN_REQ] = service.Login
+		router := &server.Router{Handler:make(map[pb.MsgType]server.Handler)}
+		router.Handler[pb.MsgType_MSG_LOGIN_REQ] = service.Login
 
 		err := server.Server(SERVER_ADDR, router)
 		if err != nil {
