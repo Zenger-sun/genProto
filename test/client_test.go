@@ -45,6 +45,8 @@ func TestClinet(t *testing.T) {
 		}
 
 		fmt.Println(head.MsgType, res.UserId, res.Result)
+
+		conn.Close()
 		break
 	}
 }
