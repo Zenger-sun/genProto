@@ -5,4 +5,4 @@ msg: protoc
 	go run main.go genMsg
 
 install: msg
-	go build -o server main.go
+	go build -o myTcp main.go
