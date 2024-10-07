@@ -1,24 +1,15 @@
 package server
 
 import (
+	"genProto/msg/pb"
 	"log/slog"
 	"net"
-	"sync"
-
-	"genProto/msg/pb"
 
 	"google.golang.org/protobuf/proto"
 )
 
-type Handler func(msg proto.Message, conn net.Conn) error
-
-type Router struct {
-	mu      sync.RWMutex
-	Handler map[pb.MsgType]Handler
-}
-
-func Server(addr string, router *Router) error {
-	laddr, err := net.ResolveTCPAddr("tcp", addr)
+func listen(ctx *Context) error {
+	laddr, err := net.ResolveTCPAddr("tcp", ctx.addr)
 	if err != nil {
 		return err
 	}
@@ -34,11 +25,11 @@ func Server(addr string, router *Router) error {
 			return err
 		}
 
-		go readTCP(conn, router)
+		go readTCP(conn, ctx)
 	}
 }
 
-func readTCP(conn net.Conn, router *Router) {
+func readTCP(conn net.Conn, ctx *Context) {
 	buff := make([]byte, PACK_MAX_LEN)
 
 	for {
@@ -50,20 +41,21 @@ func readTCP(conn net.Conn, router *Router) {
 			return
 		}
 
-		head, msg, err := UnpackMsg(buff)
+		pack, err := UnpackMsg(buff)
 		if err != nil {
 			slog.Warn("readTCP unpack head err: ", err)
 			continue
 		}
+		pack.Conn = conn
 
-		router.mu.RLock()
-		handler, ok := router.Handler[pb.MsgType(head.MsgType)]
-		router.mu.RUnlock()
+		ctx.Router.RLock()
+		handler, ok := ctx.Router.Handler[pb.MsgType(pack.MsgType)]
+		ctx.Router.RUnlock()
 		if !ok {
 			continue
 		}
 
-		err = handler(msg, conn)
+		err = handler(pack, ctx)
 		if err != nil {
 			slog.Warn("handler err: ", err)
 			continue

@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/binary"
 	"errors"
+	"net"
 
 	"genProto/msg"
 	"genProto/msg/pb"
@@ -17,25 +18,36 @@ const (
 )
 
 type Head struct {
-	Len       uint32
-	MsgType   uint16
+	Len     uint32
+	MsgType uint16
 }
 
-func UnpackMsg(data []byte) (*Head, proto.Message, error) {
+type Packet struct {
+	*Head
+	Msg  proto.Message
+	Conn net.Conn
+}
+
+func UnpackMsg(data []byte) (pack *Packet, err error) {
 	var head Head
 	head.Len = uint32(data[0]) | uint32(data[1])<<8 | uint32(data[2])<<16 | uint32(data[3])<<24
 	head.MsgType = uint16(data[4]) | uint16(data[5])<<8
 	if head.Len > (PACK_MAX_LEN + HEAD_LEN) {
-		return nil, nil, errors.New("msg len error!")
+		return nil, errors.New("msg len error!")
 	}
 
-	msgType := msg.GetMsgStruct(pb.MsgType(head.MsgType))
-	err := proto.Unmarshal(data[HEAD_LEN:HEAD_LEN+head.Len], msgType)
+	msg := msg.GetMsgStruct(pb.MsgType(head.MsgType))
+	err = proto.Unmarshal(data[HEAD_LEN:HEAD_LEN+head.Len], msg)
 	if err != nil {
-		return nil, nil, err
+		return nil, err
 	}
 
-	return &head, msgType, nil
+	packet := &Packet{
+		Head: &head,
+		Msg:  msg,
+	}
+
+	return packet, nil
 }
 
 func PackMsg(head *Head, message proto.Message) []byte {

@@ -14,6 +14,12 @@ import (
 const (
 	PROTO_PATH  = "./msg/proto/msg.proto"
 	SERVER_ADDR = "127.0.0.1:8080"
+
+	DB_HOST     = "127.0.0.1"
+	DB_PORT     = 3308
+	DB_USERNAME = "root"
+	DB_PASSWORD = "test111"
+	DB_SCHEMA   = "data_character"
 )
 
 func main() {
@@ -28,14 +34,23 @@ func main() {
 		msg.GenMsg(PROTO_PATH)
 
 	case "server":
-		router := &server.Router{Handler:make(map[pb.MsgType]server.Handler)}
+		conf := &server.Conf{
+			Addr: SERVER_ADDR,
+			DbConf: &server.DbConf{
+				Host:     DB_HOST,
+				Port:     DB_PORT,
+				Username: DB_USERNAME,
+				Password: DB_PASSWORD,
+				Schema:   DB_SCHEMA,
+			},
+		}
+
+		ctx := server.NewContext(conf)
+		router := &server.Router{Handler: make(map[pb.MsgType]server.Handler)}
 		router.Handler[pb.MsgType_MSG_LOGIN_REQ] = service.Login
 
-		err := server.Server(SERVER_ADDR, router)
-		if err != nil {
-			slog.Warn("tcp server runtime err: ", err)
-			os.Exit(1)
-		}
+		ctx.Server()
+		ctx.Setup()
 
 	case "help":
 		fmt.Println("cmd content:")
