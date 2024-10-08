@@ -9,7 +9,7 @@ import (
 )
 
 func listen(ctx *Context) error {
-	laddr, err := net.ResolveTCPAddr("tcp", ctx.addr)
+	laddr, err := net.ResolveTCPAddr("tcp", ctx.Addr)
 	if err != nil {
 		return err
 	}

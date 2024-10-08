@@ -15,7 +15,7 @@ type Context struct {
 }
 
 func (ctx *Context) Server() {
-	db, err := DbServer(ctx.Conf.dbConf)
+	db, err := DbServer(ctx.Conf.DbConf)
 	if err != nil {
 		slog.Error("db err: ", err)
 	}
@@ -46,6 +46,6 @@ func (ctx *Context) Shutdown() {
 }
 
 func NewContext(conf *Conf) *Context {
-	sync := &Context{Conf: conf}
+	sync := &Context{Conf: conf, Router: NewRouter()}
 	return sync
 }

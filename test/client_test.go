@@ -34,12 +34,12 @@ func TestClinet(t *testing.T) {
 			continue
 		}
 
-		head, msg, err := server.UnpackMsg(pack)
+		pack, err := server.UnpackMsg(pack)
 		if err != nil {
 			return
 		}
 
-		res := msg.(*pb.LoginRes)
+		res := pack.Msg.(*pb.LoginRes)
 		if res == nil {
 			return
 		}
@@ -91,12 +91,12 @@ func TestMultiClinet(t *testing.T) {
 					continue
 				}
 
-				_, msg, err := server.UnpackMsg(pack)
+				pack, err := server.UnpackMsg(pack)
 				if err != nil {
 					return
 				}
 
-				res := msg.(*pb.LoginRes)
+				res := pack.Msg.(*pb.LoginRes)
 				if res == nil {
 					return
 				}

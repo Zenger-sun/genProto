@@ -11,7 +11,7 @@ import (
 type DataPlayer struct {
 	Id        uint32
 	UserNanme string
-	Avatar	  uint32
+	Avatar    uint32
 }
 
 func (d *DataPlayer) Load(db *sql.DB, id uint32) (*DataPlayer, error) {
@@ -34,7 +34,7 @@ func (d *DataPlayer) Load(db *sql.DB, id uint32) (*DataPlayer, error) {
 	return nil, errors.New("Not Exist!")
 }
 
-func (d *DataPlayer) Update(db *sql.DB, option server.DbOption) (err error) {
+func (d *DataPlayer) Update(db *sql.DB, option server.DbOption) error {
 	var sql string
 
 	switch option {
@@ -42,23 +42,29 @@ func (d *DataPlayer) Update(db *sql.DB, option server.DbOption) (err error) {
 		sql = fmt.Sprintf("INSERT INTO player(`user_name`, `avatar`) VALUES('%s', %d)", d.UserNanme, d.Avatar)
 		result, err := db.Exec(sql)
 		if err != nil {
-			return
+			return err
 		}
 
 		id, err := result.LastInsertId()
 		if err != nil {
-			return
+			return err
 		}
 
 		d.Id = uint32(id)
 
 	case server.UPDATE:
 		sql = fmt.Sprintf("UPDATA player SET `user_name` = '%s', `avatar` = %d WHERE id = %d", d.UserNanme, d.Avatar, d.Id)
-		_, err = db.Exec(sql)
+		_, err := db.Exec(sql)
+		if err != nil {
+			return err
+		}
 	case server.DELETE:
 		sql = fmt.Sprintf("DELETE FROM player WHERE id = %d", d.Id)
-		_, err = db.Exec(sql)
+		_, err := db.Exec(sql)
+		if err != nil {
+			return err
+		}
 	}
 
-	return
+	return nil
 }

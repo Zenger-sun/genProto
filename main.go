@@ -2,13 +2,12 @@ package main
 
 import (
 	"fmt"
+	"genProto/service"
 	"log/slog"
 	"os"
 
 	"genProto/msg"
-	"genProto/msg/pb"
 	"genProto/server"
-	"genProto/service"
 )
 
 const (
@@ -46,8 +45,8 @@ func main() {
 		}
 
 		ctx := server.NewContext(conf)
-		router := &server.Router{Handler: make(map[pb.MsgType]server.Handler)}
-		router.Handler[pb.MsgType_MSG_LOGIN_REQ] = service.Login
+		svc := service.NewSvc(ctx)
+		svc.Init()
 
 		ctx.Server()
 		ctx.Setup()

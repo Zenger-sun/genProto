@@ -24,6 +24,7 @@ func (s *Svc) Login(packet *server.Packet, ctx *server.Context) error {
 			Avatar:    0,
 		},
 	}
+
 	s.NewPlayer(player)
 
 	res := &pb.LoginRes{

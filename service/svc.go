@@ -1,6 +1,9 @@
 package service
 
-import "genProto/server"
+import (
+	"genProto/msg/pb"
+	"genProto/server"
+)
 
 type Svc struct {
 	*server.Context
@@ -17,6 +20,10 @@ func (s *Svc) GetPlayer(uid uint32) *Player {
 	}
 
 	return nil
+}
+
+func (s *Svc) Init() {
+	s.RegisterRouter(pb.MsgType_MSG_LOGIN_REQ, s.Login)
 }
 
 func NewSvc(ctx *server.Context) *Svc {

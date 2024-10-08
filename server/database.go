@@ -3,6 +3,8 @@ package server
 import (
 	"database/sql"
 	"fmt"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 type DbOption uint8
